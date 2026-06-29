@@ -25,17 +25,24 @@ function isPerimeter(x, y) {
          (x < COLS - 1 && grid[idx(x + 1, y)] === EMPTY);
 }
 
-// Nearest border cell from which the marker can actually act, so it can never
-// respawn boxed inside claimed territory.
+// Nearest border cell from which the marker can actually act, preferring one
+// well away from all Sparx so the player never respawns on top of one.
 function safeSpawn() {
   const cx = COLS >> 1;
   const seen = new Uint8Array(COLS * ROWS);
   const start = idx(cx, 0);
   const q = [start];
   seen[start] = 1;
+  let nearest = null;
   for (let qi = 0; qi < q.length; qi++) {
     const c = q[qi], x = c % COLS, y = (c / COLS) | 0;
-    if (isPerimeter(x, y)) return { x, y };
+    if (isPerimeter(x, y)) {
+      if (!nearest) nearest = { x, y };
+      const minDist = (sparx && sparx.length)
+        ? Math.min(...sparx.map(s => Math.max(Math.abs(x - s.x), Math.abs(y - s.y))))
+        : Infinity;
+      if (minDist >= RELOCATE_MIN_DIST) return { x, y };
+    }
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const ax = x + dx, ay = y + dy;
       if (!inBounds(ax, ay)) continue;
@@ -43,7 +50,7 @@ function safeSpawn() {
       if (!seen[ai]) { seen[ai] = 1; q.push(ai); }
     }
   }
-  return { x: cx, y: 0 };
+  return nearest || { x: cx, y: 0 };
 }
 
 // After a claim the border moves; any Spark now stranded inside filled territory
