@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qix</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="hud">
+    <span>SCORE <b id="score">0</b></span>
+    <span>AREA <b id="area">0%</b> / 75%</span>
+    <span>LIVES <b id="lives">3</b></span>
+    <span>LEVEL <b id="level">1</b></span>
+  </div>
+  <div id="wrap">
+    <canvas id="game" width="640" height="480"></canvas>
+    <div id="overlay"></div>
+  </div>
+  <div id="hint">Tip: stay on the border to be safe — you're only vulnerable while drawing.</div>
+
+  <script src="js/config.js"></script>
+  <script src="js/leaderboard.js"></script>
+  <script src="js/grid.js"></script>
+  <script src="js/qix.js"></script>
+  <script src="js/sparx.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

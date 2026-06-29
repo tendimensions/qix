@@ -1,0 +1,105 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #0a0a14;
+  color: #cfd2ff;
+  font-family: "Courier New", monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  user-select: none;
+}
+
+#hud {
+  display: flex;
+  gap: 28px;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+#hud b { color: #fff; }
+
+#wrap { position: relative; }
+
+canvas {
+  display: block;
+  background: #000;
+  border: 2px solid #2a2a55;
+  image-rendering: pixelated;
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: rgba(4, 4, 16, 0.86);
+  gap: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+#overlay.hidden { display: none; }
+#overlay h1 { margin: 0; font-size: 40px; color: #fff; letter-spacing: 6px; }
+#overlay p { margin: 0; font-size: 14px; line-height: 1.6; color: #9aa0e0; }
+#overlay .key { color: #ffe66d; }
+
+#hint { font-size: 12px; color: #5a5f9a; }
+
+/* leaderboard */
+.lb {
+  min-width: 280px;
+  margin: 4px 0;
+  font-size: 13px;
+  color: #b8bcf0;
+}
+.lb-title {
+  color: #ffe66d;
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+}
+.lb-empty { color: #6a6fa0; font-style: italic; }
+.lb-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto 44px;
+  gap: 10px;
+  padding: 2px 8px;
+  align-items: baseline;
+}
+.lb-row.lb-hi { color: #fff; background: rgba(255, 230, 109, 0.14); border-radius: 3px; }
+.lb-rank { color: #6a6fa0; text-align: right; }
+.lb-name { text-align: left; letter-spacing: 2px; }
+.lb-score { text-align: right; color: #cfd2ff; }
+.lb-lvl { text-align: right; color: #6a6fa0; }
+
+/* high-score name entry */
+.entry { display: flex; gap: 8px; justify-content: center; margin: 4px 0; }
+.entry input {
+  font-family: inherit;
+  font-size: 18px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  width: 140px;
+  text-align: center;
+  background: #11122a;
+  color: #fff;
+  border: 2px solid #3550b8;
+  border-radius: 4px;
+  padding: 6px;
+  outline: none;
+}
+.entry button {
+  font-family: inherit;
+  font-size: 16px;
+  background: #3550b8;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 16px;
+  cursor: pointer;
+}
+.entry button:hover { background: #4763d8; }
