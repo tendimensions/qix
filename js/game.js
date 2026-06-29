@@ -154,10 +154,23 @@ function winLevel() {
   running = false;
   level++;
   score += 1000;
-  showMessage(
-    `<h1>LEVEL CLEAR</h1><p>Score <span class="key">${score}</span></p><p class="key">Press any key for level ${level}</p>`,
-    () => { hideOverlay(); newLevel(); running = true; }
-  );
+  overlay.innerHTML =
+    `<h1>LEVEL CLEAR</h1>` +
+    `<p>Score <span class="key">${score}</span></p>` +
+    `<p class="key" id="levelPrompt" style="visibility:hidden">Press Space for level ${level}</p>`;
+  overlay.classList.remove("hidden");
+  setTimeout(() => {
+    const prompt = document.getElementById("levelPrompt");
+    if (prompt) prompt.style.visibility = "visible";
+    setKeyOverlay((e) => {
+      if (e.code !== "Space") return;
+      e.preventDefault();
+      setKeyOverlay(null);
+      hideOverlay();
+      newLevel();
+      running = true;
+    });
+  }, 1500);
 }
 
 function gameOver() {
