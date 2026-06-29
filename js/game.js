@@ -138,7 +138,7 @@ const INSTRUCTIONS =
 
 function showStart() {
   showMessage(
-    `<h1>QIX</h1>${INSTRUCTIONS}${Leaderboard.toHTML(-1)}<p class="key">Press any key to start</p>`,
+    `<h1>QIX</h1>${INSTRUCTIONS}${Leaderboard.toHTML(-1)}<p class="key">Press any key to start</p><p class="version">v${VERSION}</p>`,
     startGame
   );
 }

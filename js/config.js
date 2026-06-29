@@ -1,5 +1,7 @@
 "use strict";
 
+const VERSION = "1.0.0";
+
 // Grid + canvas geometry
 const CELL = 5;
 const COLS = 128;
