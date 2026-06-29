@@ -1,6 +1,6 @@
 "use strict";
 
-const VERSION = "1.0.0";
+const VERSION = "0.0.8";
 
 // Grid + canvas geometry
 const CELL = 5;

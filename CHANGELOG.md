@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0]
+## [0.0.8]
 
 - Display version number on the title screen to help track deployed copies.
 - Death transition now pauses the game with a cause-specific overlay (CAUGHT BY SPARX / TOUCHED THE QIX / BURNED BY THE FUSE); only Space resumes.
