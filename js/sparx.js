@@ -2,7 +2,7 @@
 
 function spawnSparx() {
   if (sparx.length === 0) { addSpark(1); addSpark(-1); }
-  else if (sparx.length < MAX_SPARX) { addSpark(Math.random() < 0.5 ? 1 : -1); }
+  else if (sparx.length < Math.min(MAX_SPARX, level + 1)) { addSpark(Math.random() < 0.5 ? 1 : -1); }
   nextSparxAt += SPARX_INTERVAL_MS;
 }
 
