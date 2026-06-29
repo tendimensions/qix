@@ -7,15 +7,18 @@ const dirs = {
   KeyA: { x: -1, y: 0 }, KeyD: { x: 1, y: 0 },
 };
 const heldStack = [];
+let spaceHeld = false;
 
 addEventListener("keydown", (e) => {
+  if (!running) return; // overlays manage their own input
+  if (e.code === "Space") { e.preventDefault(); spaceHeld = true; return; }
   const d = dirs[e.code];
   if (!d) return;
-  if (!running) return; // overlays manage their own input
   e.preventDefault();
   if (!heldStack.some(h => h.code === e.code)) heldStack.push({ code: e.code, d });
 });
 addEventListener("keyup", (e) => {
+  if (e.code === "Space") { spaceHeld = false; return; }
   const i = heldStack.findIndex(h => h.code === e.code);
   if (i !== -1) heldStack.splice(i, 1);
 });
@@ -50,7 +53,7 @@ function stepPlayer() {
       if (!isEdge(nx, ny)) return false; // stay on the border, never inside
       player.x = nx; player.y = ny;
       return true;
-    } else if (v === EMPTY) {
+    } else if (v === EMPTY && spaceHeld) {
       drawing = true;
       grid[idx(nx, ny)] = TRAIL;
       trail = [idx(nx, ny)];

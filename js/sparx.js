@@ -42,7 +42,7 @@ function stepSparx(dtMs) {
   }
   if (!drawing) {
     for (const s of sparx) {
-      if (s.x === player.x && s.y === player.y) { loseLife(); break; }
+      if (s.x === player.x && s.y === player.y) { loseLife("sparx"); break; }
     }
   }
 }
@@ -58,6 +58,6 @@ function stepFuse(dt) {
   while (fuseAcc >= FUSE_MS) {
     fuseAcc -= FUSE_MS;
     fuseIdx++;
-    if (fuseIdx >= trail.length - 1) { loseLife(); return; }
+    if (fuseIdx >= trail.length - 1) { loseLife("fuse"); return; }
   }
 }

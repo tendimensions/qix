@@ -18,7 +18,7 @@ function stepQix(dt) {
   qix.bhist.push({ x: qix.b.x, y: qix.b.y });
   if (qix.ahist.length > 14) { qix.ahist.shift(); qix.bhist.shift(); }
 
-  if (drawing && segmentHitsTrail(qix.a, qix.b)) loseLife();
+  if (drawing && segmentHitsTrail(qix.a, qix.b)) loseLife("qix");
 }
 
 function movePoint(p, dt) {

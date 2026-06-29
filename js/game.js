@@ -38,15 +38,37 @@ function awardExtraLives() {
   }
 }
 
-function loseLife() {
+function loseLife(cause) {
+  running = false;
   for (const i of trail) grid[i] = EMPTY;
   trail = [];
   drawing = false;
   fuseIdx = -1;
-  player = safeSpawn();
   lives--;
   updateHud();
-  if (lives <= 0) gameOver();
+
+  if (lives <= 0) {
+    gameOver();
+    return;
+  }
+
+  const msg = cause === "sparx" ? "CAUGHT BY SPARX"
+            : cause === "qix"   ? "TOUCHED THE QIX"
+            :                     "BURNED BY THE FUSE";
+
+  overlay.innerHTML =
+    `<h1>${msg}</h1>` +
+    `<p>Lives remaining: <span class="key">${lives}</span></p>` +
+    `<p class="key">Press Space to continue</p>`;
+  overlay.classList.remove("hidden");
+  setKeyOverlay((e) => {
+    if (e.code !== "Space") return;
+    e.preventDefault();
+    setKeyOverlay(null);
+    hideOverlay();
+    player = safeSpawn();
+    running = true;
+  });
 }
 
 function flash(text, color) {
@@ -106,7 +128,8 @@ function showNameEntry(finalScore, finalLevel, onDone) {
 // ---- flow ----
 const INSTRUCTIONS =
   `<p>Arrow keys / WASD to move along the border.<br>` +
-  `Push into the open space to carve out territory.<br>` +
+  `Hold <span class="key">Space</span> + an arrow key to draw into open space.<br>` +
+  `Release Space once drawing — keep moving to finish the line.<br>` +
   `Close a loop to claim the side <span class="key">without</span> the Qix.<br>` +
   `Claim <span class="key">75%</span> to clear the level.<br>` +
   `Earn an <span class="key">extra life</span> every 25% you claim.<br>` +
