@@ -34,11 +34,13 @@ function awardExtraLives() {
   while (nextLifeAt < WIN_PERCENT && percent() >= nextLifeAt) {
     lives++;
     nextLifeAt += EXTRA_LIFE_STEP;
+    sfxExtraLife();
     flash("EXTRA LIFE", "#7cfc6a");
   }
 }
 
 function loseLife(cause) {
+  sfxDie();
   running = false;
   for (const i of trail) grid[i] = EMPTY;
   trail = [];
@@ -145,12 +147,15 @@ function showStart() {
 
 function startGame() {
   hideOverlay();
+  paused = false;
+  bgmPlay();
   score = 0; lives = 3; level = 1;
   newLevel();
   running = true;
 }
 
 function winLevel() {
+  sfxLevelClear();
   running = false;
   level++;
   score += 1000;
@@ -198,6 +203,28 @@ function restart() {
   hideOverlay();
   showStart();
 }
+
+// ---- pause ----
+let paused = false;
+
+function togglePause() {
+  if (paused) {
+    paused = false;
+    running = true;
+    hideOverlay();
+    bgmResume();
+  } else if (running) {
+    paused = true;
+    running = false;
+    bgmPause();
+    overlay.innerHTML = `<h1>PAUSED</h1><p class="key">Press P to resume</p>`;
+    overlay.classList.remove("hidden");
+  }
+}
+
+addEventListener("keydown", (e) => {
+  if (e.code === "KeyP") togglePause();
+});
 
 // ---- main loop ----
 let last = performance.now();

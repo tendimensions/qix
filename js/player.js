@@ -41,6 +41,7 @@ function stepPlayer() {
       grid[idx(nx, ny)] = TRAIL;
       trail.push(idx(nx, ny));
       player.x = nx; player.y = ny;
+      sfxDraw();
       return true;
     } else if (v === FILLED) {
       player.x = nx; player.y = ny;
@@ -58,6 +59,7 @@ function stepPlayer() {
       grid[idx(nx, ny)] = TRAIL;
       trail = [idx(nx, ny)];
       player.x = nx; player.y = ny;
+      sfxDraw();
       return true;
     }
     return false;
@@ -65,6 +67,7 @@ function stepPlayer() {
 }
 
 function commitTrail() {
+  sfxClaim();
   for (const i of trail) grid[i] = FILLED;
   trail = [];
   drawing = false;

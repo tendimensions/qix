@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.9]
+
+- Added background music (`audio/music.mp3`) that starts on the first keypress and loops for the duration of the session.
+- Added `M` key to mute/unmute music from anywhere, including overlays.
+- Added procedurally generated sound effects via Web Audio API: drawing buzz, territory-claim sweep, death descent, level-clear arpeggio, and extra-life jingle.
+- Improved SFX reliability: sounds are scheduled ahead of the current audio clock and the AudioContext is resumed eagerly on every keydown/pointerdown, preventing missed sounds after browser auto-suspension.
+- Added `P` key to pause and unpause the game; pausing also pauses the background music.
+- Created `audio/` folder for music and future sound-effect files.
+
 ## [0.0.8]
 
 - Display version number on the title screen to help track deployed copies.
