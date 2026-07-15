@@ -4,8 +4,7 @@
 const bgm = document.getElementById("bgm");
 
 function bgmPlay() {
-  // Create the AudioContext here so it's tied to the user gesture.
-  if (!_actx) _actx = new AudioContext();
+  actx(); // ensure context + resume listeners are initialised on this user gesture
   bgm.play().catch(() => {});
 }
 
