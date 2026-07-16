@@ -1,0 +1,20 @@
+# Repo scaffolding — not part of the served game
+.git
+.gitignore
+.claude
+.dockerignore
+CHANGELOG.md
+LICENSE
+README.md
+
+# Deployment files
+Dockerfile
+docker-compose.yml
+deploy-from-git.sh
+nginx.conf
+nginx-host.conf
+
+# Particle engine prototype — standalone demo, not part of the game
+particles.html
+js/particles.js
+css/particles.css
