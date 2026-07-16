@@ -34,11 +34,14 @@ function awardExtraLives() {
   while (nextLifeAt < WIN_PERCENT && percent() >= nextLifeAt) {
     lives++;
     nextLifeAt += EXTRA_LIFE_STEP;
+    sfxExtraLife();
     flash("EXTRA LIFE", "#7cfc6a");
   }
 }
 
 function loseLife(cause) {
+  sfxDrawStop();
+  sfxDie();
   running = false;
   for (const i of trail) grid[i] = EMPTY;
   trail = [];
@@ -145,12 +148,15 @@ function showStart() {
 
 function startGame() {
   hideOverlay();
+  paused = false;
+  bgmPlay();
   score = 0; lives = 3; level = 1;
   newLevel();
   running = true;
 }
 
 function winLevel() {
+  sfxLevelClear();
   running = false;
   level++;
   score += 1000;
@@ -175,8 +181,11 @@ function winLevel() {
 
 function gameOver() {
   running = false;
+  bgmStop();
+  sfxStopAll();
   const finalScore = score, finalLevel = level;
   if (Leaderboard.qualifies(finalScore)) {
+    sfxHighScore();
     showNameEntry(finalScore, finalLevel, (name) => {
       const rank = Leaderboard.submit(name, finalScore, finalLevel);
       showMessage(
@@ -186,6 +195,7 @@ function gameOver() {
       );
     });
   } else {
+    sfxGameOver();
     showMessage(
       `<h1>GAME OVER</h1><p>Final score <span class="key">${finalScore}</span></p>` +
       `${Leaderboard.toHTML(-1)}<p class="key">Press any key to play again</p>`,
@@ -198,6 +208,35 @@ function restart() {
   hideOverlay();
   showStart();
 }
+
+// ---- pause ----
+let paused = false;
+
+function pauseGame() {
+  paused = true;
+  running = false;
+  if (BGM_PAUSE_BEHAVIOUR === "duck") bgmDuck(); else bgmPause();
+  overlay.innerHTML = `<h1>PAUSED</h1><p class="key">Press P to resume</p>`;
+  overlay.classList.remove("hidden");
+  setKeyOverlay((e) => {
+    if (e.code !== "KeyP") return;
+    e.preventDefault();
+    setKeyOverlay(null);
+    resumeGame();
+  });
+}
+
+function resumeGame() {
+  paused = false;
+  running = true;
+  hideOverlay();
+  if (BGM_PAUSE_BEHAVIOUR === "duck") bgmUnduck(); else bgmResume();
+}
+
+// P is only processed while the game is actively running — never during overlays.
+addEventListener("keydown", (e) => {
+  if (e.code === "KeyP" && running) pauseGame();
+});
 
 // ---- main loop ----
 let last = performance.now();
