@@ -166,7 +166,7 @@ let particles = [];
 
 // Fireworks
 let fireworks = [];
-let nextFireworkAt = Date.now() + rand(800, 2500);
+let nextFireworkAt = rand(800, 2500);
 
 function rand(min, max) { return Math.random() * (max - min) + min; }
 
@@ -254,31 +254,24 @@ function spawnParticles() {
     }
 }
 
-// Main animation loop
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// Update the simulation at a fixed 60 Hz so its timing does not depend on the
+// monitor's refresh rate. Existing velocity, gravity, and life values remain
+// expressed per 60 Hz update.
+function update(simulationTime) {
+    if (ENABLE_STARFIELD) stars.forEach(s => s.update());
 
-    // Starfield (deepest layer, drawn first)
-    if (ENABLE_STARFIELD) {
-        stars.forEach(s => { s.update(); s.draw(ctx); });
-    }
-
-    // Dust motes (ambient mid-background)
     if (ENABLE_DUST_MOTES) {
         motes = motes.filter(m => m.isAlive());
         while (motes.length < DUST_COUNT) motes.push(new DustMote());
-        motes.forEach(m => { m.update(); m.draw(ctx); });
+        motes.forEach(m => m.update());
     }
 
-    // Mouse trail (adds to shared particles[])
     if (ENABLE_MOUSE_TRAIL) spawnParticles();
 
-    // Fireworks: auto-spawn + rocket physics (also populates particles[])
     if (ENABLE_FIREWORKS) {
-        const now = Date.now();
-        if (now >= nextFireworkAt) {
+        if (simulationTime >= nextFireworkAt) {
             spawnFirework();
-            nextFireworkAt = now + rand(800, 2500);
+            nextFireworkAt = simulationTime + rand(800, 2500);
         }
 
         fireworks = fireworks.filter(fw => {
@@ -292,12 +285,19 @@ function animate() {
         });
     }
 
-    // Mouse trail + explosion particles (always processed so in-flight bursts finish)
     particles = particles.filter(p => p.isAlive());
-    particles.forEach(p => {
-        p.update();
-        p.draw(ctx);
-    });
+    particles.forEach(p => p.update());
+}
+
+// Render at the monitor's refresh rate. State only changes in update().
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (ENABLE_STARFIELD) stars.forEach(s => s.draw(ctx));
+    if (ENABLE_DUST_MOTES) motes.forEach(m => m.draw(ctx));
+
+    // Mouse trail + explosion particles
+    particles.forEach(p => p.draw(ctx));
 
     // Rocket heads drawn on top of everything
     if (ENABLE_FIREWORKS) {
@@ -308,9 +308,31 @@ function animate() {
             ctx.fill();
         });
     }
+}
 
+const FIXED_UPDATE_MS = 1000 / 60;
+const MAX_FRAME_DELTA_MS = 250;
+let previousFrameTime = null;
+let updateAccumulator = 0;
+let simulationTime = 0;
+
+// Main animation loop
+function animate(frameTime) {
+    if (previousFrameTime === null) previousFrameTime = frameTime;
+
+    const frameDelta = Math.min(frameTime - previousFrameTime, MAX_FRAME_DELTA_MS);
+    previousFrameTime = frameTime;
+    updateAccumulator += frameDelta;
+
+    while (updateAccumulator >= FIXED_UPDATE_MS) {
+        simulationTime += FIXED_UPDATE_MS;
+        update(simulationTime);
+        updateAccumulator -= FIXED_UPDATE_MS;
+    }
+
+    draw();
     requestAnimationFrame(animate);
 }
 
 // Start animation
-animate();
+requestAnimationFrame(animate);
