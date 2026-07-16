@@ -1,6 +1,10 @@
 "use strict";
 
-const VERSION = "0.0.9";
+const VERSION = "0.0.10";
+
+// Controls BGM behaviour when the game is paused.
+// "pause" — music stops completely; "duck" — music continues at half volume.
+const BGM_PAUSE_BEHAVIOUR = "duck";
 
 // Grid + canvas geometry
 const CELL = 5;

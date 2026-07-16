@@ -3,101 +3,51 @@
 // ── Background music ──────────────────────────────────────────────────────────
 const bgm = document.getElementById("bgm");
 
-function bgmPlay() {
-  actx(); // ensure context + resume listeners are initialised on this user gesture
-  bgm.play().catch(() => {});
-}
-
-// M key toggles mute from anywhere (works on overlays too)
-addEventListener("keydown", (e) => {
-  if (e.code === "KeyM") bgm.muted = !bgm.muted;
-});
-
-// ── Web Audio context ─────────────────────────────────────────────────────────
-let _actx = null;
-function actx() {
-  if (!_actx) {
-    _actx = new AudioContext();
-    // Resume eagerly on every user gesture so the context is always running
-    // by the time the game loop schedules a sound on the next rAF frame.
-    const resume = () => { if (_actx.state !== "running") _actx.resume(); };
-    document.addEventListener("keydown",    resume);
-    document.addEventListener("pointerdown", resume);
-  }
-  return _actx;
-}
-
-// ── BGM helpers ──────────────────────────────────────────────────────────────
+function bgmPlay()   { bgm.play().catch(() => {}); }
 function bgmPause()  { bgm.pause(); }
 function bgmResume() { bgm.play().catch(() => {}); }
+function bgmStop()   { bgm.pause(); bgm.currentTime = 0; }
+function bgmDuck()   { bgm.volume = 0.5; }
+function bgmUnduck() { bgm.volume = 1.0; }
 
-// ── Primitive helpers ─────────────────────────────────────────────────────────
-// All sounds are scheduled OFFSET seconds ahead so a resuming AudioContext
-// never misses a note that was placed exactly at currentTime.
-const OFFSET = 0.02;
-
-function _tone(freq, type, peak, t, dur) {
-  const c = actx();
-  // Clamp to at least OFFSET ahead in case the context was just resumed.
-  const s = Math.max(t, c.currentTime + OFFSET);
-  const osc = c.createOscillator();
-  const g   = c.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, s);
-  g.gain.setValueAtTime(0, s);
-  g.gain.linearRampToValueAtTime(peak, s + 0.005);
-  g.gain.exponentialRampToValueAtTime(0.0001, s + dur);
-  osc.connect(g);
-  g.connect(c.destination);
-  osc.start(s);
-  osc.stop(s + dur + 0.02);
-}
-
-function _sweep(f0, f1, type, peak, t, dur) {
-  const c = actx();
-  const s = Math.max(t, c.currentTime + OFFSET);
-  const osc = c.createOscillator();
-  const g   = c.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(f0, s);
-  osc.frequency.exponentialRampToValueAtTime(f1, s + dur);
-  g.gain.setValueAtTime(peak, s);
-  g.gain.exponentialRampToValueAtTime(0.0001, s + dur);
-  osc.connect(g);
-  g.connect(c.destination);
-  osc.start(s);
-  osc.stop(s + dur + 0.02);
-}
+// M key toggles mute for all audio from anywhere (works on overlays too)
+addEventListener("keydown", (e) => {
+  if (e.code !== "KeyM") return;
+  const muted = !bgm.muted;
+  bgm.muted = muted;
+  for (const s of Object.values(_sfx)) s.muted = muted;
+});
 
 // ── Sound effects ─────────────────────────────────────────────────────────────
+const _sfx = {
+  draw:       new Audio("audio/sfx-draw.mp3"),
+  claim:      new Audio("audio/sfx-claim.mp3"),
+  die:        new Audio("audio/sfx-die.mp3"),
+  extralife:  new Audio("audio/sfx-extralife.mp3"),
+  levelclear: new Audio("audio/sfx-levelclear.mp3"),
+  gameover:   new Audio("audio/sfx-gameover.mp3"),
+  highscore:  new Audio("audio/sfx-highscore.mp3"),
+};
+_sfx.draw.loop = true;
 
-// Short square tick while drawing — rapid calls blend into a buzzy trail sound.
-function sfxDraw() {
-  const t = actx().currentTime + OFFSET;
-  _tone(320, "square", 0.045, t, 0.028);
+function _play(sfx) {
+  sfx.currentTime = 0;
+  sfx.play().catch(() => {});
 }
 
-// Ascending sweep on territory claim.
-function sfxClaim() {
-  const t = actx().currentTime + OFFSET;
-  _sweep(200, 900, "sine", 0.25, t, 0.22);
-}
+// Drawing buzz — loops while the player is drawing; stopped when drawing ends.
+function sfxDraw()     { if (_sfx.draw.paused) _sfx.draw.play().catch(() => {}); }
+function sfxDrawStop() { _sfx.draw.pause(); _sfx.draw.currentTime = 0; }
 
-// Two-note jingle for extra life.
-function sfxExtraLife() {
-  const t = actx().currentTime + OFFSET;
-  _tone(523, "triangle", 0.22, t,        0.12);
-  _tone(784, "triangle", 0.22, t + 0.11, 0.15);
-}
+// One-shot effects.
+function sfxClaim()      { _play(_sfx.claim); }
+function sfxDie()        { _play(_sfx.die); }
+function sfxExtraLife()  { _play(_sfx.extralife); }
+function sfxLevelClear() { _play(_sfx.levelclear); }
+function sfxGameOver()   { _play(_sfx.gameover); }
+function sfxHighScore()  { _play(_sfx.highscore); }
 
-// Descending sweep on death.
-function sfxDie() {
-  const t = actx().currentTime + OFFSET;
-  _sweep(440, 40, "sawtooth", 0.22, t, 0.5);
-}
-
-// Ascending four-note arpeggio fanfare on level clear.
-function sfxLevelClear() {
-  const t = actx().currentTime + OFFSET;
-  [523, 659, 784, 1047].forEach((f, i) => _tone(f, "sine", 0.22, t + i * 0.1, 0.18));
+// Stop and reset every SFX element (used on game over).
+function sfxStopAll() {
+  for (const s of Object.values(_sfx)) { s.pause(); s.currentTime = 0; }
 }

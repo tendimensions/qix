@@ -67,6 +67,7 @@ function stepPlayer() {
 }
 
 function commitTrail() {
+  sfxDrawStop();
   sfxClaim();
   for (const i of trail) grid[i] = FILLED;
   trail = [];
