@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.12]
+
+- Added `Q` key to quit to the main screen mid-game: pauses, prompts "Are you sure you want to quit?" with a Y/N choice, and on confirmation stops all music/sound and returns to the start screen.
+
 ## [0.0.11]
 
 - Integrated the particle engine prototype into gameplay: gold sparkle on territory claim, warm debris on death, green sparkle on extra life, multi-hue confetti on level clear, and a gold burst on new high score.

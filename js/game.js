@@ -140,7 +140,8 @@ const INSTRUCTIONS =
   `Claim <span class="key">75%</span> to clear the level.<br>` +
   `Earn an <span class="key">extra life</span> every 25% you claim.<br>` +
   `Beware the <span class="key">Sparx</span> on the border, and keep moving —<br>` +
-  `stop mid-draw and the <span class="key">Fuse</span> burns up your line.</p>`;
+  `stop mid-draw and the <span class="key">Fuse</span> burns up your line.<br>` +
+  `Press <span class="key">Q</span> to quit to the main screen.</p>`;
 
 function showStart() {
   showMessage(
@@ -242,6 +243,36 @@ function resumeGame() {
 // P is only processed while the game is actively running — never during overlays.
 addEventListener("keydown", (e) => {
   if (e.code === "KeyP" && running) pauseGame();
+});
+
+// ---- quit ----
+function promptQuit() {
+  running = false;
+  if (BGM_PAUSE_BEHAVIOUR === "duck") bgmDuck(); else bgmPause();
+  overlay.innerHTML = `<h1>QUIT?</h1><p>Are you sure you want to quit?</p><p class="key">Y / N</p>`;
+  overlay.classList.remove("hidden");
+  setKeyOverlay((e) => {
+    if (e.code === "KeyY") {
+      e.preventDefault();
+      setKeyOverlay(null);
+      bgmStop();
+      sfxStopAll();
+      running = false;
+      paused = false;
+      restart();
+    } else if (e.code === "KeyN") {
+      e.preventDefault();
+      setKeyOverlay(null);
+      hideOverlay();
+      if (BGM_PAUSE_BEHAVIOUR === "duck") bgmUnduck(); else bgmResume();
+      running = true;
+    }
+  });
+}
+
+// Q is only processed while the game is actively running — never during overlays.
+addEventListener("keydown", (e) => {
+  if (e.code === "KeyQ" && running) promptQuit();
 });
 
 // ---- main loop ----

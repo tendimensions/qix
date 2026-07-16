@@ -1,6 +1,6 @@
 "use strict";
 
-const VERSION = "0.0.11";
+const VERSION = "0.0.12";
 
 // Controls BGM behaviour when the game is paused.
 // "pause" — music stops completely; "duck" — music continues at half volume.
