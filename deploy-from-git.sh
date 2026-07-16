@@ -14,7 +14,7 @@ set -e
 
 # ── Config ───────────────────────────────────────────────────────────────────
 REPO_URL="https://github.com/tendimensions/qix.git"
-REPO_DIR="$HOME/qix"
+REPO_DIR="$HOME/repos/qix"
 COMPOSE_FILE="$REPO_DIR/docker-compose.yml"
 HOST_NGINX_CONF="$REPO_DIR/nginx-host.conf"
 NGINX_SITE_NAME="qix.tendimensions.com"
