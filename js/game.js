@@ -24,6 +24,7 @@ function newLevel() {
   fuseAcc = 0;
   idleMs = 0;
 
+  clearParticles();
   renderLand();
   updateHud();
 }
@@ -35,6 +36,7 @@ function awardExtraLives() {
     lives++;
     nextLifeAt += EXTRA_LIFE_STEP;
     sfxExtraLife();
+    burstExtraLife(player.x, player.y);
     flash("EXTRA LIFE", "#7cfc6a");
   }
 }
@@ -42,6 +44,7 @@ function awardExtraLives() {
 function loseLife(cause) {
   sfxDrawStop();
   sfxDie();
+  burstDeath(player.x, player.y);
   running = false;
   for (const i of trail) grid[i] = EMPTY;
   trail = [];
@@ -157,6 +160,7 @@ function startGame() {
 
 function winLevel() {
   sfxLevelClear();
+  burstLevelClear();
   running = false;
   level++;
   score += 1000;
@@ -186,6 +190,7 @@ function gameOver() {
   const finalScore = score, finalLevel = level;
   if (Leaderboard.qualifies(finalScore)) {
     sfxHighScore();
+    burstHighScore();
     showNameEntry(finalScore, finalLevel, (name) => {
       const rank = Leaderboard.submit(name, finalScore, finalLevel);
       showMessage(
@@ -196,6 +201,7 @@ function gameOver() {
     });
   } else {
     sfxGameOver();
+    burstGameOver(player.x, player.y);
     showMessage(
       `<h1>GAME OVER</h1><p>Final score <span class="key">${finalScore}</span></p>` +
       `${Leaderboard.toHTML(-1)}<p class="key">Press any key to play again</p>`,
@@ -257,6 +263,7 @@ function frame(now) {
     stepQix(dtMs / 16);
     stepSparx(dtMs);
   }
+  stepParticles(dtMs);
   render();
   requestAnimationFrame(frame);
 }

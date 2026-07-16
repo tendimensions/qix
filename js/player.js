@@ -69,6 +69,7 @@ function stepPlayer() {
 function commitTrail() {
   sfxDrawStop();
   sfxClaim();
+  burstClaim(player.x, player.y);
   for (const i of trail) grid[i] = FILLED;
   trail = [];
   drawing = false;

@@ -1,8 +1,3 @@
-# Particle engine prototype — standalone demo, not part of the game
-particles.html
-js/particles.js
-css/particles.css
-
 # Not referenced by any COPY, but keeps the build context small
 .git
 .claude

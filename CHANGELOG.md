@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.11]
+
+- Integrated the particle engine prototype into gameplay: gold sparkle on territory claim, warm debris on death, green sparkle on extra life, multi-hue confetti on level clear, and a gold burst on new high score.
+- Removed the standalone particle demo (`particles.html`, `css/particles.css`) now that the engine drives real gameplay effects.
+
 ## [0.0.10]
 
 - Replaced procedurally generated sound effects with file-based mp3 playback (`audio/sfx-*.mp3`).

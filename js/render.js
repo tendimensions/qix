@@ -38,6 +38,8 @@ function render() {
   ctx.fillStyle = COLOR_PLAYER;
   ctx.fillRect(player.x * CELL - 1, player.y * CELL - 1, CELL + 2, CELL + 2);
 
+  drawParticles(ctx);
+
   if (flashText && performance.now() < flashUntil) {
     ctx.fillStyle = flashColor;
     ctx.font = "bold 26px 'Courier New', monospace";
